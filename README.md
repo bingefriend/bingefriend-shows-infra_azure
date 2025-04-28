@@ -6,8 +6,8 @@ This project is part of the BingeFriend suite, which provides tools and services
 
 ## Features
 
-* Ingest trigger initates a fetch of all show index data page by page.
-* Update trigger initiates a fetch of all shows that have been updated since the last ingestion.
+* Ingest HTTP trigger initates a fetch of all show index data page by page.
+* Update Timer trigger initiates a fetch of all shows that have been updated since the last ingestion.
 * Processes individual show records.
 * For each show, orchestrates the fetching and processing of its seasons and episodes.
 * Stores processed data (shows, genres, seasons, episodes) in a SQL database.
@@ -18,6 +18,7 @@ This project is part of the BingeFriend suite, which provides tools and services
 1.  **Clone the repository.**
 2.  **Install dependencies:**
     ```bash
+    # Dependencies are managed using Poetry.
     poetry install
     ```
 3.  **Configure Environment Variables:** Create a `local.settings.json` file (or set environment variables directly) with the following values:
@@ -48,8 +49,6 @@ This project is part of the BingeFriend suite, which provides tools and services
     ```
 
 ## Dependencies
-
-Dependencies are managed using Poetry. The main dependencies include:
 
 ### BingeFriend libraries
 * `bingefriend-shows-core`: Core models and utilities for handling TV show data.
