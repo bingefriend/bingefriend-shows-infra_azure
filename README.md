@@ -67,11 +67,11 @@ This project is part of the [BingeFriend](https://github.com/bingefriend) suite,
 * `sqlalchemy`: ORM and database interactions.
 * `pymssql`: Azure SQL database driver.
 * `alembic`: Database schema migrations.
-* `python-dotenv`: Loads environment variables from `.env.alembic` for Alembic migrations.
+* `python-dotenv`: Load `AZURE_SQL_CONNECTION_STRING` from `.env.alembic` for Alembic migrations.
 
 ### Testing
 * `pytest`: Unit testing.
-* `python-dotenv`: Loads environment variables from `.env.test` for testing.
+* `python-dotenv`: Load mock `AZURE_SQL_CONNECTION_STRING` from `.env.test` for testing.
 
 ## License
 
