@@ -1,0 +1,72 @@
+# BingeFriend Shows Ingestion Service for Azure Functions
+
+Azure Functions to maintain a complete cache of all TV show, season, and episode data from the TV Maze API. Data is stored in an Azure SQL database.
+
+This project is part of the BingeFriend suite, which provides tools and services for TV watchers to track and manage their viewing.
+
+## Features
+
+* Ingest trigger initates a fetch of all show index data page by page.
+* Update trigger initiates a fetch of all shows that have been updated since the last ingestion.
+* Processes individual show records.
+* For each show, orchestrates the fetching and processing of its seasons and episodes.
+* Stores processed data (shows, genres, seasons, episodes) in a SQL database.
+* Uses Alembic for database schema migrations.
+
+## Setup
+
+1.  **Clone the repository.**
+2.  **Install dependencies:**
+    ```bash
+    poetry install
+    ```
+3.  **Configure Environment Variables:** Create a `local.settings.json` file (or set environment variables directly) with the following values:
+
+    *   `FUNCTIONS_WORKER_RUNTIME`: Set to `python`.
+    *   `AzureWebJobsStorage`: Connection string for Azure Storage (used by Durable Functions). For local development, `UseDevelopmentStorage=true` can be used if Azurite is running.
+    *   `AZURE_SQL_CONNECTION_STRING`: SQLAlchemy-compatible connection string for your Azure SQL or SQL Server database (e.g., `mssql+pymssql://USER:PASSWORD@SERVER:PORT/DATABASE`).
+    *   `SHOWS_TABLE`: Name of the database table for shows (e.g., `dbo.shows`).
+    *   `SHOW_GENRES_TABLE`: Name of the database table for show-genre relationships (e.g., `dbo.show_genres`).
+    *   `SEASONS_TABLE`: Name of the database table for seasons (e.g., `dbo.seasons`).
+    *   `EPISODES_TABLE`: Name of the database table for episodes (e.g., `dbo.episodes`).
+    *   `TVMAZE_API_BASE_URL`: Base URL for the TVMaze API (e.g., `https://api.tvmaze.com`).
+    *   `MAX_API_RETRIES`: Maximum number of retries for API calls.
+    *   `API_RETRY_BACKOFF_FACTOR`: Backoff factor for API retry attempts.
+
+4.  **Database Migrations:** Ensure the database schema is up-to-date using Alembic:
+    ```bash
+    # (Optional) Generate a new migration if models changed
+    # alembic revision --autogenerate -m "Describe changes"
+
+    # Apply migrations
+    alembic upgrade head
+    ```
+    
+5.  **Run the Azure Functions Host:**
+    ```bash
+    func start
+    ```
+
+## Dependencies
+
+Dependencies are managed using Poetry. The main dependencies include:
+
+### BingeFriend libraries
+* `bingefriend-shows-core`: Core models and utilities for handling TV show data.
+* `bingefriend-shows-client_tvmaze`: API client for fetching data from TVMaze.
+
+### Other dependencies
+* `azure-functions`
+* `azure-durable-functions`
+* `sqlalchemy`
+* `pymssql` (or other appropriate DBAPI driver for your SQL connection string)
+* `alembic`
+* `python-dotenv`
+
+## License
+
+This project is licensed under the MIT License. See the (`LICENSE`)[LICENSE] file for details.
+
+## Attribution
+
+This client uses the TV Maze API but is not endorsed or certified by TV Maze. Data provided by [TVmaze.com](https://www.tvmaze.com/).

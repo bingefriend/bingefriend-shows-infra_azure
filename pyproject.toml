@@ -1,0 +1,32 @@
+[project]
+name = "bingefriend-shows-infra-azure"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Tom Boone",email = "tbc@tomboone.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11,<4"
+dependencies = [
+    "azure-functions (>=1.23.0,<2.0.0)",
+    "azure-functions-durable (>=1.2.10,<2.0.0)",
+    "bingefriend-shows-client-tvmaze (>=0.1.0,<0.2.0)",
+    "sqlalchemy (>=2.0.40,<3.0.0)",
+    "bingefriend-shows-core (>=0.1.1,<0.2.0)",
+    "pymssql (>=2.3.4,<3.0.0)",
+    "alembic (>=1.15.2,<2.0.0)",
+]
+
+[tool.poetry]
+packages = [
+    {include = "bingefriend", from = "src"},
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+python-dotenv = "^1.1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
