@@ -73,6 +73,13 @@ This project is part of the [BingeFriend](https://github.com/bingefriend) suite,
 * `pytest`: Unit testing.
 * `python-dotenv`: Load mock `AZURE_SQL_CONNECTION_STRING` from `.env.test` for testing.
 
+## Local Development
+
+* [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local) for local function execution.
+* [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=visual-studio%2Cblob-storage) for local Azure Storage emulation.
+* [Azure Storage Explorer](https://learn.microsoft.com/en-us/azure/storage/common/storage-explorer-install) for managing Azure Storage resources.
+* `docker-compose.yml` included to run a local Azure SQL database.
+
 ## License
 
 This project is licensed under the MIT License. See the (`LICENSE`)[LICENSE] file for details.
