@@ -1,8 +1,8 @@
 # BingeFriend Shows Ingestion Service for Azure Functions
 
-Azure Functions to maintain a complete cache of all TV show, season, and episode data from the TV Maze API. Data is stored in an Azure SQL database.
+Azure Functions to maintain a complete cache of all TV show, season, and episode data from the [TV Maze API](https://www.tvmaze.com/api). Data is stored in an Azure SQL database.
 
-This project is part of the BingeFriend suite, which provides tools and services for TV watchers to track and manage their viewing.
+This project is part of the [BingeFriend](https://github.com/bingefriend) suite, which provides tools and services for TV watchers to track and manage their viewing.
 
 ## Features
 
@@ -23,18 +23,23 @@ This project is part of the BingeFriend suite, which provides tools and services
     ```
 3.  **Configure Environment Variables:** Create a `local.settings.json` file (or set environment variables directly) with the following values:
 
-    *   `FUNCTIONS_WORKER_RUNTIME`: Set to `python`.
-    *   `AzureWebJobsStorage`: Connection string for Azure Storage (used by Durable Functions). For local development, `UseDevelopmentStorage=true` can be used if Azurite is running.
-    *   `AZURE_SQL_CONNECTION_STRING`: SQLAlchemy-compatible connection string for your Azure SQL or SQL Server database (e.g., `mssql+pymssql://USER:PASSWORD@SERVER:PORT/DATABASE`).
-    *   `SHOWS_TABLE`: Name of the database table for shows (e.g., `dbo.shows`).
-    *   `SHOW_GENRES_TABLE`: Name of the database table for show-genre relationships (e.g., `dbo.show_genres`).
-    *   `SEASONS_TABLE`: Name of the database table for seasons (e.g., `dbo.seasons`).
-    *   `EPISODES_TABLE`: Name of the database table for episodes (e.g., `dbo.episodes`).
-    *   `TVMAZE_API_BASE_URL`: Base URL for the TVMaze API (e.g., `https://api.tvmaze.com`).
-    *   `MAX_API_RETRIES`: Maximum number of retries for API calls.
-    *   `API_RETRY_BACKOFF_FACTOR`: Backoff factor for API retry attempts.
+    * Direct dependencies:
 
-4.  **Database Migrations:** Ensure the database schema is up-to-date using Alembic:
+      * `FUNCTIONS_WORKER_RUNTIME`: Set to `python`.
+      * `AzureWebJobsStorage`: Connection string for Azure Storage (used by Durable Functions). For local development, `UseDevelopmentStorage=true` can be used if Azurite is running.
+      * `AZURE_SQL_CONNECTION_STRING`: SQLAlchemy-compatible connection string for your Azure SQL or SQL Server database (e.g., `mssql+pymssql://USER:PASSWORD@SERVER:PORT/DATABASE`).
+      * `SHOWS_TABLE`: Name of the database table for shows (e.g., `dbo.shows`).
+      * `SHOW_GENRES_TABLE`: Name of the database table for show-genre relationships (e.g., `dbo.show_genre`).
+      * `SEASONS_TABLE`: Name of the database table for seasons (e.g., `dbo.seasons`).
+      * `EPISODES_TABLE`: Name of the database table for episodes (e.g., `dbo.episodes`).
+ 
+    * bingefriend-shows-client_tvmaze:
+
+      * `TVMAZE_API_BASE_URL`: Base URL for the TVMaze API (e.g., `https://api.tvmaze.com`).
+      * `MAX_API_RETRIES`: Maximum number of retries for API calls.
+      * `API_RETRY_BACKOFF_FACTOR`: Backoff factor for API retry attempts.
+
+4. **Database Migrations:** Ensure the database schema is up-to-date using Alembic:
     ```bash
     # (Optional) Generate a new migration if models changed
     # alembic revision --autogenerate -m "Describe changes"
@@ -54,13 +59,19 @@ This project is part of the BingeFriend suite, which provides tools and services
 * `bingefriend-shows-core`: Core models and utilities for handling TV show data.
 * `bingefriend-shows-client_tvmaze`: API client for fetching data from TVMaze.
 
-### Other dependencies
+### Azure Functions
 * `azure-functions`
-* `azure-durable-functions`
-* `sqlalchemy`
-* `pymssql` (or other appropriate DBAPI driver for your SQL connection string)
-* `alembic`
-* `python-dotenv`
+* `azure-durable-functions`: Orchestration functions for managing the ingestion/update process.
+
+### Database
+* `sqlalchemy`: ORM and database interactions.
+* `pymssql`: Azure SQL database driver.
+* `alembic`: Database schema migrations.
+* `python-dotenv`: Loads environment variables from `.env.alembic`.
+
+### Testing
+* `pytest`: Unit testing.
+* `python-dotenv`: Loads environment variables from `.env.test`.
 
 ## License
 
