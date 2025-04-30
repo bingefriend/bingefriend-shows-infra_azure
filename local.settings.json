@@ -3,7 +3,7 @@
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "python",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "AZURE_SQL_CONNECTION_STRING":"mssql+pymssql://SA:MyStrongPass123@localhost:1433/bingefringe_shows_db",
+    "SQLALCHEMY_CONNECTION_STRING":"mysql+pymysql://root:root@localhost:3306/bingefringe_shows_db",
     "SHOWS_TABLE": "dbo.shows",
     "SHOW_GENRES_TABLE": "dbo.show_genres",
     "SEASONS_TABLE": "dbo.seasons",

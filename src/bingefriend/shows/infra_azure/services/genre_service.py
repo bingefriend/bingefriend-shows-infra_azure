@@ -6,18 +6,24 @@ from bingefriend.shows.infra_azure.repositories.genre_repo import GenreRepositor
 # noinspection PyMethodMayBeStatic
 class GenreService:
     """Service to manage genre-related operations."""
-    def __init__(self):
-        self.genre_repo = GenreRepository()
 
     def get_or_create_genre(self, genre_name):
-        """Get or create a genre entry in the database."""
+        """Get or create a genre entry in the database.
+        Args:
+            genre_name (str): Name of the genre to be created or fetched.
 
-        existing_genre_id = self.genre_repo.get_genre_id_by_name(genre_name)
+        Returns:
+            int: The primary key of the genre if it exists or is created.
+
+        """
+
+        genre_repo = GenreRepository()
+        existing_genre_id = genre_repo.get_genre_id_by_name(genre_name)
 
         if existing_genre_id:
             return existing_genre_id
 
         # Create a new genre entry
-        new_genre_id = self.genre_repo.create_genre(genre_name)
+        new_genre_id = genre_repo.create_genre(genre_name)
 
         return new_genre_id

@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 134ba54712fc
+Revision ID: f40d8f97ce24
 Revises: 
-Create Date: 2025-04-27 23:26:35.084644
+Create Date: 2025-04-29 22:31:51.984402
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '134ba54712fc'
+revision: str = 'f40d8f97ce24'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,10 +30,21 @@ def upgrade() -> None:
     op.create_table('networks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('maze_id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=True),
-    sa.Column('country_name', sa.String(), nullable=True),
-    sa.Column('country_code', sa.String(), nullable=True),
-    sa.Column('country_timezone', sa.String(), nullable=True),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('country_name', sa.String(length=255), nullable=True),
+    sa.Column('country_code', sa.String(length=255), nullable=True),
+    sa.Column('country_timezone', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('maze_id')
+    )
+    op.create_table('web_channel',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('maze_id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('country_name', sa.String(length=255), nullable=True),
+    sa.Column('country_code', sa.String(length=255), nullable=True),
+    sa.Column('country_timezone', sa.String(length=255), nullable=True),
+    sa.Column('official_site', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('maze_id')
     )
@@ -52,13 +63,14 @@ def upgrade() -> None:
     sa.Column('schedule_time', sa.String(length=255), nullable=True),
     sa.Column('schedule_days', sa.String(length=255), nullable=True),
     sa.Column('network_id', sa.Integer(), nullable=True),
-    sa.Column('webChannel', sa.String(length=255), nullable=True),
+    sa.Column('webChannel_id', sa.Integer(), nullable=True),
     sa.Column('externals_imdb', sa.String(length=255), nullable=True),
     sa.Column('image_medium', sa.String(length=255), nullable=True),
     sa.Column('image_original', sa.String(length=255), nullable=True),
     sa.Column('summary', sa.Text(), nullable=True),
     sa.Column('updated', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['network_id'], ['networks.id'], ),
+    sa.ForeignKeyConstraint(['webChannel_id'], ['web_channel.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('maze_id')
     )
@@ -72,12 +84,14 @@ def upgrade() -> None:
     sa.Column('premiereDate', sa.Date(), nullable=True),
     sa.Column('endDate', sa.Date(), nullable=True),
     sa.Column('network_id', sa.Integer(), nullable=True),
+    sa.Column('webChannel_id', sa.Integer(), nullable=True),
     sa.Column('image_medium', sa.String(length=255), nullable=True),
     sa.Column('image_original', sa.String(length=255), nullable=True),
     sa.Column('summary', sa.Text(), nullable=True),
     sa.Column('show_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['network_id'], ['networks.id'], ),
     sa.ForeignKeyConstraint(['show_id'], ['shows.id'], ),
+    sa.ForeignKeyConstraint(['webChannel_id'], ['web_channel.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('maze_id')
     )
@@ -120,6 +134,7 @@ def downgrade() -> None:
     op.drop_table('show_genre')
     op.drop_table('seasons')
     op.drop_table('shows')
+    op.drop_table('web_channel')
     op.drop_table('networks')
     op.drop_table('genres')
     # ### end Alembic commands ###

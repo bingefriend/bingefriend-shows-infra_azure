@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from bingefriend.shows.core.models.base import Base
+# noinspection PyUnresolvedReferences
 from bingefriend.shows.core.models import genre, show, season, episode, network, show_genre
 
 load_dotenv('alembic/.env.alembic')  # Load environment variables for Alembic
@@ -30,7 +31,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-config.set_main_option("sqlalchemy.url", os.getenv("AZURE_SQL_CONNECTION_STRING"))
+config.set_main_option("sqlalchemy.url", os.getenv("SQLALCHEMY_CONNECTION_STRING"))
 
 
 def run_migrations_offline() -> None:

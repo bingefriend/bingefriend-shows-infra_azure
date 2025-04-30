@@ -13,10 +13,10 @@ dependencies = [
     "azure-functions-durable (>=1.2.10,<2.0.0)",
     "bingefriend-shows-client-tvmaze (>=0.1.0,<0.2.0)",
     "sqlalchemy (>=2.0.40,<3.0.0)",
-    "bingefriend-shows-core (>=0.1.1,<0.2.0)",
-    "pymssql (>=2.3.4,<3.0.0)",
+    "bingefriend-shows-core (>=0.2.0,<0.3.0)",
     "alembic (>=1.15.2,<2.0.0)",
     "python-dotenv (>=1.1.0,<2.0.0)",
+    "pymysql (>=1.1.1,<2.0.0)",
 ]
 
 [tool.poetry]

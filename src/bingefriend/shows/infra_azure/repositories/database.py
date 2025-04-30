@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base
 import bingefriend.shows.infra_azure.config as config
 
 # 1. Get the connection string
-SQLALCHEMY_DATABASE_URL = config.AZURE_SQL_CONNECTION_STRING
+SQLALCHEMY_DATABASE_URL = config.SQLALCHEMY_CONNECTION_STRING
 if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("AZURE_SQL_CONNECTION_STRING is not set in the configuration.")
 
