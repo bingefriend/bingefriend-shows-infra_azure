@@ -132,13 +132,9 @@ def ProcessShowUpdateActivity(updateinfo: dict) -> None:
 
     try:
         show_service = ShowService()
-        # Reuse or adapt the logic from the ingest process.
-        # This likely involves fetching the full show details by ID first,
-        # then calling a method similar to process_show_record.
-        # Example: Fetch full record first
         show_record = show_service.fetch_show_details(show_id)  # Assumes this method exists
+
         if show_record:
-            # Reuse the existing processing logic which handles create/update
             show_service.process_show_record(show_record, db)
             db.commit()
             logging.info(f"Successfully processed update for show ID: {show_id}")
