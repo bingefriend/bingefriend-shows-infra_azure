@@ -5,25 +5,22 @@ from bingefriend.shows.core.models.show import Show
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from bingefriend.shows.infra_azure.repositories.database import SessionLocal
-
 
 # noinspection PyMethodMayBeStatic
 class ShowRepository:
     """Repository for managing shows."""
 
-    def create_show(self, show_data: dict[str, Any]) -> int | None:
+    def create_show(self, show_data: dict[str, Any], db: Session) -> int | None:
         """Create a new show entry in the database.
 
         Args:
             show_data (dict): Data of the show to be created.
+            db (Session): The database session to use for the operation.
 
         Returns:
             int | None: The primary key of the created show entry, or None if an error occurred.
 
         """
-
-        db = SessionLocal()
         try:
             schedule_data = show_data.get('schedule') or {}
             image_data = show_data.get('image') or {}
@@ -51,20 +48,14 @@ class ShowRepository:
                 updated=show_data.get('updated')
             )
             db.add(show)
-            db.commit()
-            db.refresh(show)
             show_id = show.id
         except Exception as e:
             print(f"Error creating show entry: {e}")
-            db.rollback()
-            db.close()
             return None
-
-        db.close()
 
         return show_id
 
-    def upsert_show(self, show_data: dict[str, Any]) -> Optional[int]:
+    def upsert_show(self, show_data: dict[str, Any], db: Session) -> Optional[int]:
         """Creates a new show or updates an existing one based on maze_id.
 
         Args:
@@ -72,17 +63,16 @@ class ShowRepository:
                                         It's expected that 'network_id' and 'web_channel_id'
                                         have already been resolved and added to this dict
                                         by the calling service.
+            db (Session): The database session to use for the operation.
 
         Returns:
             Optional[int]: The internal database ID of the created/updated show,
                            or None if an error occurred or maze_id was missing.
         """
-        db: Session = SessionLocal()
         maze_id = show_data.get("id")
 
         if not maze_id:
             logging.error("Cannot upsert show: 'id' (maze_id) is missing from show_data.")
-            db.close()
             return None
 
         show_id = None  # Initialize show_id to None
@@ -98,7 +88,6 @@ class ShowRepository:
             db_ended = ended_date if ended_date else None
 
             image_data = show_data.get("image") or {}
-            rating_data = show_data.get("rating") or {}
             schedule_data = show_data.get("schedule") or {}
             externals_data = show_data.get("externals") or {}
             # Convert schedule days list to comma-separated string for storage
@@ -115,20 +104,13 @@ class ShowRepository:
                 "language": show_data.get("language"),
                 "status": show_data.get("status"),
                 "runtime": show_data.get("runtime"),
-                "average_runtime": show_data.get("averageRuntime"),
+                "averageRuntime": show_data.get("averageRuntime"),
                 "premiered": db_premiered,
                 "ended": db_ended,
-                "official_site": show_data.get("officialSite"),
                 "schedule_time": schedule_data.get("time"),
                 "schedule_days": schedule_days_str,
-                "rating_average": rating_data.get("average"),
-                "weight": show_data.get("weight"),
                 "network_id": show_data.get("network_id"),  # Provided by ShowService
-                "web_channel_id": show_data.get("web_channel_id"),  # Provided by ShowService
-                "dvd_country": show_data.get("dvdCountry"),  # Verify model field name if different
-                "externals_tvmaze": externals_data.get("tvmaze"),
-                "externals_tvrage": externals_data.get("tvrage"),
-                "externals_thetvdb": externals_data.get("thetvdb"),
+                "webChannel_id": show_data.get("web_channel_id"),  # Provided by ShowService
                 "externals_imdb": externals_data.get("imdb"),
                 "image_medium": image_data.get("medium"),
                 "image_original": image_data.get("original"),
@@ -145,8 +127,6 @@ class ShowRepository:
                 update_data = show_attrs
                 for key, value in update_data.items():
                     setattr(existing_show, key, value)
-                db.commit()
-                db.refresh(existing_show)  # Ensure the object reflects committed state
                 show_id = existing_show.id
                 logging.info(f"Successfully updated show maze_id: {maze_id}, internal DB ID: {show_id}")
             else:
@@ -155,8 +135,6 @@ class ShowRepository:
                 # Filter out keys not present in the model if necessary, or ensure model handles extra keys
                 new_show = Show(**show_attrs)
                 db.add(new_show)
-                db.commit()
-                db.refresh(new_show)  # Get the generated ID and reflect committed state
                 show_id = new_show.id
                 logging.info(f"Successfully created show maze_id: {maze_id}, internal DB ID: {show_id}")
 
@@ -164,13 +142,10 @@ class ShowRepository:
 
         except SQLAlchemyError as e:
             logging.error(f"SQLAlchemyError upserting show entry for maze_id {maze_id}: {e}")
-            db.rollback()
             return None
         except Exception as e:
             # Catching potential errors during attribute setting or model instantiation
             logging.error(f"Unexpected error upserting show entry for maze_id {maze_id}: {e}", exc_info=True)
-            db.rollback()
             return None
         finally:
-            db.close()
             return show_id

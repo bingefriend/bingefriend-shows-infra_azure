@@ -6,6 +6,9 @@ from typing import Any, List, Dict
 # noinspection PyPackageRequirements
 import azure.functions as func
 import azure.durable_functions as df
+from sqlalchemy.orm import Session
+
+from bingefriend.shows.infra_azure.repositories.database import SessionLocal
 # Assuming ShowService has methods to fetch updates and process a single show
 from bingefriend.shows.infra_azure.services.show_service import ShowService
 
@@ -112,18 +115,21 @@ def FetchUpdateListActivity(payload: Any) -> Dict[str, int]:
         return {}
 
 
-@bp.activity_trigger(input_name="update_info")
-def ProcessShowUpdateActivity(update_info: dict) -> None:
+@bp.activity_trigger(input_name="updateinfo")
+def ProcessShowUpdateActivity(updateinfo: dict) -> None:
     """
     Processes a single show update. Fetches full show details using the show_id
     and updates the database (show, seasons, episodes, etc.).
     """
-    show_id = update_info.get("show_id")
+    show_id = updateinfo.get("show_id")
     if not show_id:
         logging.error("ProcessShowUpdateActivity called without a show_id.")
         return  # Or raise an error
 
     logging.info(f"Executing ProcessShowUpdateActivity for show ID: {show_id}.")
+
+    db: Session = SessionLocal()  # Create session ONCE here
+
     try:
         show_service = ShowService()
         # Reuse or adapt the logic from the ingest process.
@@ -133,13 +139,14 @@ def ProcessShowUpdateActivity(update_info: dict) -> None:
         show_record = show_service.fetch_show_details(show_id)  # Assumes this method exists
         if show_record:
             # Reuse the existing processing logic which handles create/update
-            show_service.process_show_record(show_record)
+            show_service.process_show_record(show_record, db)
+            db.commit()
             logging.info(f"Successfully processed update for show ID: {show_id}")
         else:
             logging.warning(f"Could not fetch details for updated show ID: {show_id}. Skipping.")
 
     except Exception as e:
         logging.error(f"Error processing update for show ID {show_id}: {e}", exc_info=True)
-        # Decide if the error should halt the orchestration or just be logged
-        # Re-raising the exception here will cause the orchestrator to see the activity as failed.
-        # raise e
+        db.rollback()
+    finally:
+        db.close()

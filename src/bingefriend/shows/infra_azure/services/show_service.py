@@ -2,6 +2,9 @@
 
 import logging
 from typing import Any
+
+from sqlalchemy.orm import Session
+
 from bingefriend.shows.infra_azure.repositories.show_repo import ShowRepository
 from bingefriend.shows.infra_azure.services.episode_service import EpisodeService
 from bingefriend.shows.infra_azure.services.genre_service import GenreService
@@ -49,11 +52,12 @@ class ShowService:
             'next_page': page_number + 1 if shows_summary else None
         }
 
-    def process_show_record(self, record: dict[str, Any]) -> None:
+    def process_show_record(self, record: dict[str, Any], db: Session) -> None:
         """Process a single show record, creating or updating it and its related entities.
 
         Args:
             record (dict[str, Any]): The show record data from the API.
+            db (Session): The database session to use for database operations.
 
         """
         show_maze_id = record.get('id')
@@ -68,19 +72,19 @@ class ShowService:
         # for the ShowRepository. This part remains the same.
         network_service = NetworkService()
         network_info = record.get('network')
-        record['network_id'] = network_service.get_or_create_network(network_info) if network_info else None
+        record['network_id'] = network_service.get_or_create_network(network_info, db) if network_info else None
 
         web_channel_service = WebChannelService()
         web_channel_info = record.get('webChannel')
         record['web_channel_id'] = web_channel_service.get_or_create_web_channel(
-            web_channel_info) if web_channel_info else None
+            web_channel_info, db) if web_channel_info else None
 
         # --- Show Upsert ---
         # Assume ShowRepository has an upsert method that finds by maze_id,
         # updates if found, creates if not, and returns the internal DB show_id.
         show_repo = ShowRepository()
         # *** Requires ShowRepository.upsert_show implementation ***
-        show_id: int | None = show_repo.upsert_show(record)
+        show_id: int | None = show_repo.upsert_show(record, db)
 
         if show_id is None:
             logging.error(
@@ -98,7 +102,7 @@ class ShowService:
         if genre_names:
             genre_service = GenreService()
             for genre_name in genre_names:
-                genre_id = genre_service.get_or_create_genre(genre_name)
+                genre_id = genre_service.get_or_create_genre(genre_name, db)
                 if genre_id:
                     genre_ids.append(genre_id)
 
@@ -106,7 +110,7 @@ class ShowService:
         # This method would add new links and remove outdated ones.
         show_genre_service = ShowGenreService()
         # *** Requires ShowGenreService.sync_show_genres implementation ***
-        show_genre_service.sync_show_genres(show_id, genre_ids)
+        show_genre_service.sync_show_genres(show_id, genre_ids, db)
         logging.info(f"Synchronized {len(genre_ids)} genres for show ID: {show_id}")
 
         # --- Seasons ---
@@ -118,7 +122,7 @@ class ShowService:
             logging.info(f"Processing {len(seasons_data)} seasons for show ID: {show_id}")
             for season_record in seasons_data:
                 # *** Requires SeasonService.process_season_record to handle upserts ***
-                season_service.process_season_record(season_record, show_id)
+                season_service.process_season_record(season_record, show_id, db)
         else:
             logging.info(f"No seasons found via API for show ID: {show_id}")
 
@@ -131,7 +135,7 @@ class ShowService:
             logging.info(f"Processing {len(episodes_data)} episodes for show ID: {show_id}")
             for episode_record in episodes_data:
                 # *** Requires EpisodeService.process_episode_record to handle upserts ***
-                episode_service.process_episode_record(episode_record, show_id)
+                episode_service.process_episode_record(episode_record, show_id, db)
         else:
             logging.info(f"No episodes found via API for show ID: {show_id}")
 

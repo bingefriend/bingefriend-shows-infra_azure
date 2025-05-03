@@ -6,6 +6,9 @@ from typing import Any, List
 # noinspection PyPackageRequirements
 import azure.functions as func
 import azure.durable_functions as df
+from sqlalchemy.orm import Session
+
+from bingefriend.shows.infra_azure.repositories.database import SessionLocal
 from bingefriend.shows.infra_azure.services.show_service import ShowService
 
 bp = df.Blueprint()
@@ -106,16 +109,23 @@ def FetchShowIndexPageActivity(params: dict):
 
 @bp.activity_trigger(input_name="record")
 def ProcessShowRecordActivity(record: dict) -> None:
-    """Ingest a single show record into the database."""
-    # Instantiate dependencies needed for this activity
-    show_service = ShowService()
+    """Ingest a single show record using a single session."""
+    db: Session = SessionLocal()  # Create session ONCE here
     try:
-        show_service.process_show_record(record)
-        # Log success sparingly, e.g., just the ID or name if needed
-        # logging.info(f"Successfully processed show record Maze ID: {record.get('id')}")
+        # Instantiate services, potentially passing db if needed in __init__
+        # OR pass db to each method call
+        show_service = ShowService()  # Assuming services/repos will accept 'db' in methods
+
+        # Pass the SAME session 'db' down
+        show_service.process_show_record(record, db)
+
+        db.commit()  # Commit ONCE after all operations succeed
+        logging.info(f"Successfully processed and committed show record Maze ID: {record.get('id')}")
+
     except Exception as e:
-        # Log errors with details
         logging.error(f"Error processing show record Maze ID {record.get('id')}: {e}", exc_info=True)
-        # Decide if the error should halt the orchestration or just be logged
-        # Re-raising the exception here will cause the orchestrator to see the activity as failed.
-        # raise e # Uncomment if an activity failure should potentially fail the orchestration
+        db.rollback()  # Rollback the entire transaction on error
+        # raise e # Optional: re-raise to mark activity as failed
+
+    finally:
+        db.close()  # ALWAYS close the session

@@ -3,6 +3,8 @@
 import logging
 from typing import Any, Dict
 from bingefriend.tvmaze_client.tvmaze_api import TVMazeAPI
+from sqlalchemy.orm import Session
+
 from bingefriend.shows.infra_azure.repositories.episode_repo import EpisodeRepository
 from bingefriend.shows.infra_azure.services.season_service import SeasonService
 
@@ -33,12 +35,13 @@ class EpisodeService:
             # raise ValueError(f"No episodes found for show_id: {show_id}")
         return show_episodes
 
-    def process_episode_record(self, record: Dict[str, Any], show_id: int) -> None:
+    def process_episode_record(self, record: Dict[str, Any], show_id: int, db: Session) -> None:
         """Process a single episode record, creating or updating it.
 
         Args:
             record (Dict[str, Any]): The episode record data from the API.
             show_id (int): The internal database ID of the show associated with the episode.
+            db (Session): The database session to use for database operations.
 
         """
         episode_maze_id = record.get('id')
@@ -58,7 +61,7 @@ class EpisodeService:
             # Instantiate SeasonService correctly if needed, or pass it in __init__
             season_service = SeasonService()
             season_id = season_service.get_season_id_by_show_id_and_number(
-                show_id=show_id, season_number=season_number
+                show_id=show_id, season_number=season_number, db=db
             )
         else:
             logging.warning(
@@ -78,7 +81,7 @@ class EpisodeService:
         # Process the episode record using upsert logic
         episode_repo = EpisodeRepository()
         # *** Requires EpisodeRepository.upsert_episode implementation ***
-        episode_db_id = episode_repo.upsert_episode(record)
+        episode_db_id = episode_repo.upsert_episode(record, db)
 
         if episode_db_id:
             logging.info(
