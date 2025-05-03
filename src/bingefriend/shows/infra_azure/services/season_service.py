@@ -1,6 +1,9 @@
 """Service to manage network-related operations."""
-
+import logging
 from typing import Any
+
+from sqlalchemy.orm import Session
+
 from bingefriend.shows.infra_azure.repositories.season_repo import SeasonRepository
 from bingefriend.shows.infra_azure.services.network_service import NetworkService
 from bingefriend.tvmaze_client.tvmaze_api import TVMazeAPI
@@ -28,34 +31,50 @@ class SeasonService:
 
         return seasons
 
-    def process_season_record(self, record: dict, show_id: int) -> None:
-        """Process a single season record and return the processed data.
+    def process_season_record(self, record: dict[str, Any], show_id: int, db: Session) -> None:
+        """Process a single season record, creating or updating it.
 
         Args:
-            record (dict): The season record to process.
-            show_id (int): The ID of the show to associate with the season.
+            record (dict[str, Any]): The season record data from the API.
+            show_id (int): The internal database ID of the show to associate with the season.
+            db (Session): The database session to use for database operations.
 
         """
+        season_maze_id = record.get('id')
+        if not season_maze_id:
+            logging.error(f"Season record for show_id {show_id} is missing 'id' (maze_id). Skipping processing.")
+            return
 
+        logging.debug(f"Processing season record for show_id: {show_id}, season maze_id: {season_maze_id}")
+
+        # Add the internal show_id to the record for the repository
         record["show_id"] = show_id
 
+        # Process network data if present in the season record
+        # Note: Seasons often inherit network from the show, but the API might provide it.
         network_service = NetworkService()
+        network_info = record.get("network")
+        record["network_id"] = network_service.get_or_create_network(network_info, db) if network_info else None
 
-        # Get network data from the record
-        if record.get("network"):
-            network_id = network_service.get_or_create_network(record["network"])
-            record["network_id"] = network_id
-
-        # Process the season record
+        # Process the season record using upsert logic
         season_repo = SeasonRepository()
-        season_repo.create_season(record)
+        # *** Requires SeasonRepository.upsert_season implementation ***
+        season_db_id = season_repo.upsert_season(record, db)
 
-    def get_season_id_by_show_id_and_number(self, show_id: int, season_number: int) -> int:
+        if season_db_id:
+            logging.info(
+                f"Successfully upserted season maze_id: {season_maze_id} for show_id: {show_id} (DB ID: {season_db_id})"
+            )
+        else:
+            logging.error(f"Failed to upsert season maze_id: {season_maze_id} for show_id: {show_id}")
+
+    def get_season_id_by_show_id_and_number(self, show_id: int, season_number: int, db: Session) -> int:
         """Get the season ID for a given show ID and season number.
 
         Args:
             show_id (int): The ID of the show.
             season_number (int): The season number.
+            db (Session): The database session to use for database operations.
 
         Returns:
             int: The ID of the season.
@@ -64,6 +83,6 @@ class SeasonService:
 
         season_repo = SeasonRepository()
 
-        season_id: int = season_repo.get_season_id_by_show_id_and_number(show_id, season_number)
+        season_id: int = season_repo.get_season_id_by_show_id_and_number(show_id, season_number, db)
 
         return season_id
