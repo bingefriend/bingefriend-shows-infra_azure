@@ -5,7 +5,7 @@ from typing import Any
 # noinspection PyPackageRequirements
 import azure.functions as func
 import azure.durable_functions as df
-from bingefriend.shows.infra_azure.services.show_service import ShowService
+from bingefriend.shows.application.services.show_service import ShowService
 
 bp = df.Blueprint()
 

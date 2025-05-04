@@ -208,36 +208,6 @@ python-dateutil = ">=2.8.0"
 requests = "==2.*"
 
 [[package]]
-name = "bingefriend-shows-client-tvmaze"
-version = "0.1.2"
-description = "A Python client for the TV Maze API"
-optional = false
-python-versions = ">=3.11"
-groups = ["main"]
-files = [
-    {file = "bingefriend_shows_client_tvmaze-0.1.2-py3-none-any.whl", hash = "sha256:28346e4676a1c23338e96339644a4ec5ea84927ff965361b66dd5bada50dd835"},
-    {file = "bingefriend_shows_client_tvmaze-0.1.2.tar.gz", hash = "sha256:23fbf1a1ab1dd76014b9cc35755a553af3ed4bd801ff9e8dc7370a9066b30637"},
-]
-
-[package.dependencies]
-requests = ">=2.32.3,<3.0.0"
-
-[[package]]
-name = "bingefriend-shows-core"
-version = "0.2.6"
-description = "SQLAlchemy models for storing TV show data for BingeFriend."
-optional = false
-python-versions = ">=3.11"
-groups = ["main"]
-files = [
-    {file = "bingefriend_shows_core-0.2.6-py3-none-any.whl", hash = "sha256:399ff26efe0563678fdaa1977efab166c334d51640159ccd75d42c99baba48d6"},
-    {file = "bingefriend_shows_core-0.2.6.tar.gz", hash = "sha256:e4ce4f9b006e0af0e6d2bae7812e639d1651a3af8342de7eef929b4886eaa00d"},
-]
-
-[package.dependencies]
-sqlalchemy = ">=2.0.40,<3.0.0"
-
-[[package]]
 name = "certifi"
 version = "2025.4.26"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1314,4 +1284,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "bb95d85ddff0c934e54ea10c6ebbbddcd424466c7511d91f8be01290563f9f7a"
+content-hash = "59ebadd8bf16e2fd0b15c3ce6793363b9e45ebefa622b2c7e79d613e73cd6bbb"
