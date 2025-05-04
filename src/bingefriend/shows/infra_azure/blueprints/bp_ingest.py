@@ -6,6 +6,7 @@ from typing import Any
 import azure.functions as func
 import azure.durable_functions as df
 from bingefriend.shows.application.services.show_service import ShowService
+from bingefriend.shows.application.repositories.database import SessionLocal
 
 bp = df.Blueprint()
 
@@ -86,6 +87,16 @@ def FetchShowIndexPageActivity(params: dict):
 def ProcessShowRecordActivity(record: dict) -> None:
     """Ingest a single show record into the database."""
 
-    ShowService().process_show_record(record)
+    db = SessionLocal()
+    show_service = ShowService()
+
+    try:
+        show_service.process_show_record(record, db)
+        db.commit()
+    except Exception as e:
+        logging.error(f"Error processing show record: {record.get('name')}. Error: {e}")
+        db.rollback()
+    finally:
+        db.close()
 
     logging.info(f"Processed show record: {record.get('name')}")
