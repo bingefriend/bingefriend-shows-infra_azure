@@ -26,7 +26,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4"
-bingefriend-shows-client-tvmaze = {path = "../bingefriend-shows-client_tvmaze", develop = true}
+bingefriend-shows-tvmaze-client = {path = "../bingefriend-shows-tvmaze_client", develop = true}
 bingefriend-shows-core = {path = "../bingefriend-shows-core", develop = true}
 bingefriend-shows-application = {path = "../bingefriend-shows-application", develop = true}
 

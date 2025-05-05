@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: f40d8f97ce24
+Revision ID: bd2360bd9252
 Revises: 
-Create Date: 2025-04-29 22:31:51.984402
+Create Date: 2025-05-04 19:34:24.445918
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f40d8f97ce24'
+revision: str = 'bd2360bd9252'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -51,8 +51,7 @@ def upgrade() -> None:
     op.create_table('shows',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('maze_id', sa.Integer(), nullable=False),
-    sa.Column('url', sa.String(length=255), nullable=True),
-    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('name', sa.Text(), nullable=False),
     sa.Column('type', sa.String(length=255), nullable=False),
     sa.Column('language', sa.String(length=255), nullable=True),
     sa.Column('status', sa.String(length=255), nullable=True),
@@ -77,9 +76,8 @@ def upgrade() -> None:
     op.create_table('seasons',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('maze_id', sa.Integer(), nullable=False),
-    sa.Column('url', sa.String(length=255), nullable=True),
     sa.Column('number', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('name', sa.Text(), nullable=True),
     sa.Column('episodeOrder', sa.Integer(), nullable=True),
     sa.Column('premiereDate', sa.Date(), nullable=True),
     sa.Column('endDate', sa.Date(), nullable=True),
@@ -106,8 +104,7 @@ def upgrade() -> None:
     op.create_table('episodes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('maze_id', sa.Integer(), nullable=False),
-    sa.Column('url', sa.String(length=255), nullable=True),
-    sa.Column('name', sa.String(length=255), nullable=True),
+    sa.Column('name', sa.Text(), nullable=True),
     sa.Column('number', sa.Integer(), nullable=True),
     sa.Column('type', sa.String(length=50), nullable=True),
     sa.Column('airdate', sa.Date(), nullable=True),

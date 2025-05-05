@@ -1,7 +1,13 @@
 """Configures Alembic for database migrations."""
 
-from logging.config import fileConfig
 import os
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'bingefriend-shows-core'))
+src_path = os.path.join(project_root, 'src')
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
+
+from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
