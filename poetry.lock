@@ -208,6 +208,53 @@ python-dateutil = ">=2.8.0"
 requests = "==2.*"
 
 [[package]]
+name = "bingefriend-shows-application"
+version = "0.1.12"
+description = ""
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "bingefriend_shows_application-0.1.12-py3-none-any.whl", hash = "sha256:30ac681ef0f3f7ae469c3c90d4764d518ff96e9e260896174b446cb48895f7d4"},
+    {file = "bingefriend_shows_application-0.1.12.tar.gz", hash = "sha256:e00b667f64b4982021cd8e2a0139ee42d5211db6d0b1693cb5aa87efaeee743c"},
+]
+
+[package.dependencies]
+bingefriend-shows-client_tvmaze = ">=0.1.2,<0.2.0"
+bingefriend-shows-core = ">=0.2.6,<0.3.0"
+sqlalchemy = ">=2.0.40,<3.0.0"
+
+[[package]]
+name = "bingefriend-shows-client-tvmaze"
+version = "0.1.3"
+description = "A Python client for the TV Maze API"
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "bingefriend_shows_client_tvmaze-0.1.3-py3-none-any.whl", hash = "sha256:bcddaf15bd0563c2e49a6649b7514ce9503097088d208c9e43d5ac0d60073edb"},
+    {file = "bingefriend_shows_client_tvmaze-0.1.3.tar.gz", hash = "sha256:0df86444c6f0ae00eb9e9bd636596c651bbaed9004c601ad2fa47186215a28e4"},
+]
+
+[package.dependencies]
+requests = ">=2.32.3,<3.0.0"
+
+[[package]]
+name = "bingefriend-shows-core"
+version = "0.2.7"
+description = "SQLAlchemy models for storing TV show data for BingeFriend."
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "bingefriend_shows_core-0.2.7-py3-none-any.whl", hash = "sha256:23499f0cb5be24f1344b68c39eaceabdad1fd21304502a3bf8328c4060a9a06b"},
+    {file = "bingefriend_shows_core-0.2.7.tar.gz", hash = "sha256:3054702d91854e499b2968a9e284b5925e380aed117216cdcef1f319f8e26e74"},
+]
+
+[package.dependencies]
+sqlalchemy = ">=2.0.40,<3.0.0"
+
+[[package]]
 name = "certifi"
 version = "2025.4.26"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1284,4 +1331,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "59ebadd8bf16e2fd0b15c3ce6793363b9e45ebefa622b2c7e79d613e73cd6bbb"
+content-hash = "a352f8fb4885a94bd359e88ee1e53736547de517cb09dacda2feaf1e1896254e"
