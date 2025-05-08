@@ -1,1 +1,81 @@
+# Python virtual environments
+.venv/
+env/
+venv/
+ENV/
+__pypackages__/
 
+# IDE configuration
+.idea/
+.vscode/
+
+# Local settings file (contains secrets, should not be deployed)
+local.settings.json
+
+# Test code, coverage reports, and caches
+tests/
+test/
+*.test.py # If you have specific test file patterns
+*.spec.py # If you have specific spec file patterns
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+
+# Python bytecode, caches, and type checker caches
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pyre/
+.pytype/
+
+# OS-specific files
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+# Build artifacts and distribution files (if not part of the function package itself)
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+sdist/
+parts/
+var/
+# MANIFEST # Usually generated, can be ignored
+
+# Azure Functions specific build artifacts (if using extensions that compile, e.g., .NET based)
+extensions.csproj
+bin/
+obj/
+
+# Azurite local Azure Storage emulator files
+azurite-data/
+azurite-debug.log
+
+# Ignore files themselves
+.gitignore
+.funcignore
+
+# Documentation (if not needed at runtime)
+docs/
+site/ # For mkdocs or similar
+
+# Other development-specific files and logs
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
+# .python-version # Usually for local env management
+# Pipfile
+# Pipfile.lock # Dependencies are typically handled via requirements.txt for Azure Functions deployment
+# alembic/.env.alembic # If Alembic env vars are local only
+
+# Celery specific files (if not used by the function runtime)
+# celerybeat-schedule
+# celerybeat.pid

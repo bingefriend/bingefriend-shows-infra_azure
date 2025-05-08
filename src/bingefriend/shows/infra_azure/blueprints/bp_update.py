@@ -14,9 +14,11 @@ from sqlalchemy.orm import Session
 
 bp = df.Blueprint()
 
+TIMER_SCHEDULE_FROM_ENV = "%DAILY_UPDATE_SCHEDULE%"
+
 
 # --- Timer Trigger Client ---
-@bp.timer_trigger(schedule="0 0 5 * * *",
+@bp.timer_trigger(schedule=TIMER_SCHEDULE_FROM_ENV,
                   arg_name="timer",
                   run_on_startup=False,
                   use_monitor=True)

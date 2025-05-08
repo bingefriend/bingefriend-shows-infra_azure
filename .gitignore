@@ -157,3 +157,6 @@ ehthumbs_vista.db
 # Azurite
 azurite-data
 azurite-debug.log
+
+# Azure Functions
+local.settings.json
