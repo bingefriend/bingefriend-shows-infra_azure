@@ -98,11 +98,13 @@ def ShowUpdateOrchestrator(context: df.DurableOrchestrationContext) -> Any:
         # 2b. Process this show record (which will trigger internal fetches for seasons/episodes)
         context.set_custom_status(f"Processing show {i + 1}/{total_updates_found} (ID: {show_id})... DB Operations...")
         try:
-            yield context.call_activity("ProcessShowRecordActivity", show_summary_record)
+            yield context.call_activity("ProcessShowRecordUpdateActivity", show_summary_record)
             total_shows_processed_count += 1
         except Exception as processing_ex:
             logging.error(
-                f"ProcessShowRecordActivity failed for show_id {show_id} (from orchestrator view): {processing_ex}")
+                f"ProcessShowRecordUpdateActivity failed for show_id {show_id} (from orchestrator view): "
+                f"{processing_ex}"
+            )
             total_shows_failed_count += 1
 
     # 3. Final status update
@@ -170,7 +172,7 @@ def FetchShowSummaryActivity(params: dict) -> Dict[str, Any] | None:
 
 # noinspection PyPep8Naming,PyUnboundLocalVariable
 @bp.activity_trigger(input_name="record")  # 'record' is now the show_summary_data
-def ProcessShowRecordActivity(record: Dict[str, Any]) -> None:
+def ProcessShowRecordUpdateActivity(record: Dict[str, Any]) -> None:
     """
     Process/Update a single show record (basic summary data).
     The ShowService called internally will fetch required season/episode data via API.
@@ -178,7 +180,6 @@ def ProcessShowRecordActivity(record: Dict[str, Any]) -> None:
     """
     show_id_for_log = record.get('id', 'Unknown')
     show_name = record.get('name', f"ID: {show_id_for_log}")
-    logging.info(f"ProcessShowRecordActivity: Starting DB processing for show: '{show_name}' (ID: {show_id_for_log})")
 
     MAX_DEADLOCK_RETRIES = 3
     RETRY_DELAY_SECONDS = 2
