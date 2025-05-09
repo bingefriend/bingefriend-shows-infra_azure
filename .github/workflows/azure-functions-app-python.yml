@@ -27,7 +27,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: dev # Or your target environment
+    environment: azure-functions # Or your target environment
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
@@ -45,12 +45,11 @@ jobs:
         echo "Attempting to install poetry-plugin-export using 'poetry self add'..."
         poetry self add poetry-plugin-export
         echo "Listing Poetry plugins:"
-        poetry plugin show # List installed plugins to verify
+        poetry self show plugins
 
     - name: Generate requirements.txt and Install Dependencies
       shell: bash
       run: |
-        # Navigate to the Azure Function App package path.
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         
         echo "Current directory: $(pwd)"
@@ -58,10 +57,8 @@ jobs:
         ls -la
 
         echo "Generating requirements.txt using Poetry..."
-        # This command now relies on poetry-plugin-export installed via 'poetry self add'
         poetry export -f requirements.txt --output requirements.txt --without-hashes --without dev
         
-        # Verify that requirements.txt was created
         if [ ! -f requirements.txt ]; then
           echo "ERROR: requirements.txt not found after poetry export!"
           echo "Poetry version: $(poetry --version)"
@@ -76,7 +73,6 @@ jobs:
         echo "Successfully generated requirements.txt:"
         cat requirements.txt
 
-        # Install application dependencies into the .python_packages directory
         echo "Installing dependencies using pip from generated requirements.txt..."
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/python${{ env.PYTHON_VERSION }}/site-packages"
