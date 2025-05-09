@@ -7,20 +7,10 @@
 # To configure this workflow:
 # 1. Set up the following secrets in your repository:
 #    - AZURE_FUNCTIONAPP_PUBLISH_PROFILE
-# 2. Ensure your pyproject.toml file is correctly configured for your project,
-#    INCLUDING the poetry-plugin-export in the [tool.poetry.requires-plugins] section.
-#    Example:
-#    [tool.poetry.requires-plugins]
-#    poetry-plugin-export = ">=1.8"
+# 2. Ensure your pyproject.toml file is correctly configured for your project.
+#    You may still want to keep poetry-plugin-export in [tool.poetry.requires-plugins]
+#    for local development consistency, but this workflow will install it explicitly.
 # 3. Change env variables for your configuration.
-#
-# For more information on:
-#    - GitHub Actions for Azure: https://github.com/Azure/Actions
-#    - Azure Functions Action: https://github.com/Azure/functions-action
-#    - Publish Profile: https://github.com/Azure/functions-action#using-publish-profile-as-deployment-credential-recommended
-#    - Azure Service Principal for RBAC: https://github.com/Azure/functions-action#using-azure-service-principal-for-rbac-as-deployment-credential
-#
-# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples/tree/master/FunctionApp
 
 name: Deploy Python project to Azure Function App on Release
 
@@ -37,53 +27,48 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production # Or your target environment
+    environment: dev # Or your target environment
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
-
-    # If you want to use Azure RBAC instead of Publish Profile, then uncomment the task below
-    # - name: 'Login via Azure CLI'
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # set up AZURE_RBAC_CREDENTIALS secrets in your repository
 
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install Poetry
+    - name: Install Poetry and Export Plugin
       run: |
         python -m pip install --upgrade pip
-        pip install poetry # This will install a recent stable version of Poetry.
-                           # Poetry will automatically install plugins defined in pyproject.toml's [tool.poetry.requires-plugins]
+        pip install poetry
         poetry --version # Output poetry version for debugging
+        echo "Attempting to install poetry-plugin-export using 'poetry self add'..."
+        poetry self add poetry-plugin-export
+        echo "Listing Poetry plugins:"
+        poetry plugin show # List installed plugins to verify
 
     - name: Generate requirements.txt and Install Dependencies
       shell: bash
       run: |
         # Navigate to the Azure Function App package path.
-        # This is where pyproject.toml and poetry.lock should be located.
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         
         echo "Current directory: $(pwd)"
         echo "Listing files before poetry export:"
         ls -la
 
-        # Generate requirements.txt from pyproject.toml using poetry export.
-        # This command relies on the poetry-plugin-export being installed by Poetry
-        # due to its definition in pyproject.toml's [tool.poetry.requires-plugins] section.
-        # --without-hashes is often recommended for Azure Functions.
-        # --without dev (or --only main, or --only production if you define such groups) ensures dev dependencies are not included.
         echo "Generating requirements.txt using Poetry..."
+        # This command now relies on poetry-plugin-export installed via 'poetry self add'
         poetry export -f requirements.txt --output requirements.txt --without-hashes --without dev
         
         # Verify that requirements.txt was created
         if [ ! -f requirements.txt ]; then
           echo "ERROR: requirements.txt not found after poetry export!"
           echo "Poetry version: $(poetry --version)"
-          echo "Ensure 'poetry-plugin-export' is correctly defined in [tool.poetry.requires-plugins] in your pyproject.toml"
+          echo "Contents of pyproject.toml:"
+          cat pyproject.toml || echo "pyproject.toml not found"
+          echo "Poetry plugins found:"
+          poetry plugin show || echo "Failed to list poetry plugins"
           echo "Listing files in current directory:"
           ls -la
           exit 1
@@ -91,17 +76,14 @@ jobs:
         echo "Successfully generated requirements.txt:"
         cat requirements.txt
 
-        # Install application dependencies into the .python_packages directory,
-        # which is the standard location Azure Functions expects.
-        # The path includes the specific Python version.
+        # Install application dependencies into the .python_packages directory
         echo "Installing dependencies using pip from generated requirements.txt..."
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/python${{ env.PYTHON_VERSION }}/site-packages"
         
         echo "Listing contents of .python_packages:"
-        ls -R .python_packages
+        ls -R .python_packages || echo ".python_packages directory not found or empty"
         
-        # Navigate back to the original directory
         popd
 
     - name: 'Run Azure Functions Action'
@@ -109,7 +91,7 @@ jobs:
       id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} # This should point to the directory with host.json, function_app.py etc.
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Remove publish-profile to use Azure RBAC
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         scm-do-build-during-deployment: true
         enable-oryx-build: true
