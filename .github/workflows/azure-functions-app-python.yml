@@ -7,7 +7,11 @@
 # To configure this workflow:
 # 1. Set up the following secrets in your repository:
 #    - AZURE_FUNCTIONAPP_PUBLISH_PROFILE
-# 2. Ensure your pyproject.toml file is correctly configured for your project.
+# 2. Ensure your pyproject.toml file is correctly configured for your project,
+#    INCLUDING the poetry-plugin-export in the [tool.poetry.requires-plugins] section.
+#    Example:
+#    [tool.poetry.requires-plugins]
+#    poetry-plugin-export = ">=1.8"
 # 3. Change env variables for your configuration.
 #
 # For more information on:
@@ -28,12 +32,12 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: 'tvbingefriendshows'    # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'        # set this to the path to your function app project (where pyproject.toml is located)
-  PYTHON_VERSION: '3.11'                      # set this to the python version to use
+  PYTHON_VERSION: '3.11'                     # set this to the python version to use
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: prod # Or your target environment
+    environment: production # Or your target environment
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
@@ -49,12 +53,12 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install Poetry and poetry-plugin-export
+    - name: Install Poetry
       run: |
         python -m pip install --upgrade pip
-        pip install poetry
+        pip install poetry # This will install a recent stable version of Poetry.
+                           # Poetry will automatically install plugins defined in pyproject.toml's [tool.poetry.requires-plugins]
         poetry --version # Output poetry version for debugging
-        poetry plugin add poetry-plugin-export # For Poetry 1.2+ to enable 'poetry export'
 
     - name: Generate requirements.txt and Install Dependencies
       shell: bash
@@ -68,14 +72,18 @@ jobs:
         ls -la
 
         # Generate requirements.txt from pyproject.toml using poetry export.
+        # This command relies on the poetry-plugin-export being installed by Poetry
+        # due to its definition in pyproject.toml's [tool.poetry.requires-plugins] section.
         # --without-hashes is often recommended for Azure Functions.
-        # --without dev (or --only main) ensures dev dependencies are not included.
+        # --without dev (or --only main, or --only production if you define such groups) ensures dev dependencies are not included.
         echo "Generating requirements.txt using Poetry..."
         poetry export -f requirements.txt --output requirements.txt --without-hashes --without dev
         
         # Verify that requirements.txt was created
         if [ ! -f requirements.txt ]; then
           echo "ERROR: requirements.txt not found after poetry export!"
+          echo "Poetry version: $(poetry --version)"
+          echo "Ensure 'poetry-plugin-export' is correctly defined in [tool.poetry.requires-plugins] in your pyproject.toml"
           echo "Listing files in current directory:"
           ls -la
           exit 1
@@ -85,6 +93,7 @@ jobs:
 
         # Install application dependencies into the .python_packages directory,
         # which is the standard location Azure Functions expects.
+        # The path includes the specific Python version.
         echo "Installing dependencies using pip from generated requirements.txt..."
         python -m pip install --upgrade pip
         pip install -r requirements.txt --target=".python_packages/lib/python${{ env.PYTHON_VERSION }}/site-packages"
@@ -102,12 +111,5 @@ jobs:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} # This should point to the directory with host.json, function_app.py etc.
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Remove publish-profile to use Azure RBAC
-        # scm-do-build-during-deployment: true # Default is false. Set to true if Oryx build is desired on Azure.
-                                              # If false, it expects all dependencies to be in .python_packages.
-                                              # Given we are populating .python_packages, false might be more direct.
-                                              # However, true can be a fallback if local packaging is incomplete.
-                                              # Let's keep it true for robustness, or set to false if you are confident
-                                              # about the .python_packages content.
         scm-do-build-during-deployment: true
-        enable-oryx-build: true # This works with scm-do-build-during-deployment=true
-        # If you set scm-do-build-during-deployment to false, you might not need enable-oryx-build or set it to false.
+        enable-oryx-build: true
