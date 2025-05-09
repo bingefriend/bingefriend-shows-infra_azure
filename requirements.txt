@@ -1,31 +1,35 @@
-aiohappyeyeballs==2.6.1 ; python_version >= "3.11" and python_version < "4.0"
-aiohttp==3.11.18 ; python_version >= "3.11" and python_version < "4.0"
-aiosignal==1.3.2 ; python_version >= "3.11" and python_version < "4.0"
-alembic==1.15.2 ; python_version >= "3.11" and python_version < "4.0"
-attrs==25.3.0 ; python_version >= "3.11" and python_version < "4.0"
-azure-functions-durable==1.2.10 ; python_version >= "3.11" and python_version < "4.0"
-azure-functions==1.23.0 ; python_version >= "3.11" and python_version < "4.0"
-bingefriend-shows-application==0.1.13 ; python_version >= "3.11" and python_version < "4.0"
-bingefriend-shows-client-tvmaze==0.1.3 ; python_version >= "3.11" and python_version < "4.0"
-bingefriend-shows-core==0.2.7 ; python_version >= "3.11" and python_version < "4.0"
-certifi==2025.4.26 ; python_version >= "3.11" and python_version < "4.0"
-charset-normalizer==3.4.2 ; python_version >= "3.11" and python_version < "4.0"
-frozenlist==1.6.0 ; python_version >= "3.11" and python_version < "4.0"
-furl==2.1.4 ; python_version >= "3.11" and python_version < "4.0"
-greenlet==3.2.1 ; python_version >= "3.11" and python_version < "3.14" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32")
-idna==3.10 ; python_version >= "3.11" and python_version < "4.0"
-mako==1.3.10 ; python_version >= "3.11" and python_version < "4.0"
-markupsafe==3.0.2 ; python_version >= "3.11" and python_version < "4.0"
-multidict==6.4.3 ; python_version >= "3.11" and python_version < "4.0"
-orderedmultidict==1.0.1 ; python_version >= "3.11" and python_version < "4.0"
-propcache==0.3.1 ; python_version >= "3.11" and python_version < "4.0"
-pymysql==1.1.1 ; python_version >= "3.11" and python_version < "4.0"
-python-dateutil==2.9.0.post0 ; python_version >= "3.11" and python_version < "4.0"
-python-dotenv==1.1.0 ; python_version >= "3.11" and python_version < "4.0"
-requests==2.32.3 ; python_version >= "3.11" and python_version < "4.0"
-six==1.17.0 ; python_version >= "3.11" and python_version < "4.0"
-sqlalchemy==2.0.40 ; python_version >= "3.11" and python_version < "4.0"
-typing-extensions==4.13.2 ; python_version >= "3.11" and python_version < "4.0"
-urllib3==2.4.0 ; python_version >= "3.11" and python_version < "4.0"
-werkzeug==3.1.3 ; python_version >= "3.11" and python_version < "4.0"
-yarl==1.20.0 ; python_version >= "3.11" and python_version < "4.0"
+aiohappyeyeballs==2.6.1
+aiohttp==3.11.18
+aiosignal==1.3.2
+alembic==1.15.2
+attrs==25.3.0
+azure-functions==1.23.0
+azure-functions-durable==1.2.10
+bingefriend-shows-application==0.1.14
+bingefriend-shows-client_tvmaze==0.1.3
+bingefriend-shows-core==0.2.7
+-e git+ssh://git@github.com/bingefriend/bingefriend-shows-infra_azure.git@e650c031795f83c7f764da880e9b4f407711a168#egg=bingefriend_shows_infra_azure
+certifi==2025.4.26
+charset-normalizer==3.4.2
+frozenlist==1.6.0
+furl==2.1.4
+idna==3.10
+iniconfig==2.1.0
+Mako==1.3.10
+MarkupSafe==3.0.2
+multidict==6.4.3
+orderedmultidict==1.0.1
+packaging==25.0
+pluggy==1.5.0
+propcache==0.3.1
+PyMySQL==1.1.1
+pytest==8.3.5
+python-dateutil==2.9.0.post0
+python-dotenv==1.1.0
+requests==2.32.3
+six==1.17.0
+SQLAlchemy==2.0.40
+typing_extensions==4.13.2
+urllib3==2.4.0
+Werkzeug==3.1.3
+yarl==1.20.0
