@@ -22,8 +22,6 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'tvbingefriendshows'    # set this to your function app name on Azure
-  # AZURE_FUNCTIONAPP_PACKAGE_PATH is no longer directly used for deployment path,
-  # as we now use a 'staging' directory. It's kept for potential other uses or context.
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   PYTHON_VERSION: '3.11'                     # set this to the python version to use
 
@@ -48,7 +46,7 @@ jobs:
         echo "Attempting to install poetry-plugin-export using 'poetry self add'..."
         poetry self add poetry-plugin-export
         echo "Listing Poetry plugins:"
-        poetry plugin show --verbose # List installed plugins to verify (added --verbose)
+        poetry self show plugins --verbose
 
     - name: Prepare Staging Directory for Deployment
       shell: bash
@@ -63,7 +61,7 @@ jobs:
           echo "ERROR: requirements.txt not found after poetry export!"
           echo "Poetry version: $(poetry --version)"
           echo "Poetry plugins found:"
-          poetry plugin show --verbose || echo "Failed to list poetry plugins"
+          poetry self show plugins --verbose || echo "Failed to list poetry plugins"
           exit 1
         fi
         echo "Successfully generated requirements.txt."
