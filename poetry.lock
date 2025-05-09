@@ -209,14 +209,14 @@ requests = "==2.*"
 
 [[package]]
 name = "bingefriend-shows-application"
-version = "0.1.13"
+version = "0.1.14"
 description = ""
 optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "bingefriend_shows_application-0.1.13-py3-none-any.whl", hash = "sha256:32226cfa4daff34b6b79f07641506802e6cfbe4af8f1c7502e3774322429f830"},
-    {file = "bingefriend_shows_application-0.1.13.tar.gz", hash = "sha256:8008c07e5410bd162539fed79072e93e83d05cbef16bd61d68d1bbb4d3c39ee8"},
+    {file = "bingefriend_shows_application-0.1.14-py3-none-any.whl", hash = "sha256:075b12f5aba9c5e245de8e2b01f38f8082e2aa9359acb8dad8db18aae2c6a468"},
+    {file = "bingefriend_shows_application-0.1.14.tar.gz", hash = "sha256:14164eaf97b62813e72d229fdc29cfebead29c59275df8e4497a186ee4c03d4f"},
 ]
 
 [package.dependencies]
@@ -1331,4 +1331,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "afb903cd54c482a786410ce1c62df024157fb41160b7e99f7d4f0cae928f056f"
+content-hash = "3b62e6882c8bb2ccd5713b6127ea359007d13d16e62320499ff486534c5135ea"
