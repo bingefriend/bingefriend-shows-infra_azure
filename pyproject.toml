@@ -1,6 +1,6 @@
 [project]
 name = "bingefriend-shows-infra-azure"
-version = "0.1.4"
+version = "0.1.5"
 description = ""
 author = ["Tom Boone <tbc@tomboone.com>"]
 

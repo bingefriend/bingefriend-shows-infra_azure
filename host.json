@@ -17,6 +17,7 @@
   },
   "extensions": {
     "durableTask": {
+      "hubName": "NewBingeFriendHub",
       "maxConcurrentActivityFunctions": 5,
       "maxConcurrentOrchestratorFunctions": 2
     }
