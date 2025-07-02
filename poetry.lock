@@ -248,14 +248,14 @@ requests = ">=2.32.3,<3.0.0"
 
 [[package]]
 name = "bingefriend-shows-core"
-version = "0.2.7"
+version = "0.2.8"
 description = "SQLAlchemy models for storing TV show data for BingeFriend."
 optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "bingefriend_shows_core-0.2.7-py3-none-any.whl", hash = "sha256:23499f0cb5be24f1344b68c39eaceabdad1fd21304502a3bf8328c4060a9a06b"},
-    {file = "bingefriend_shows_core-0.2.7.tar.gz", hash = "sha256:3054702d91854e499b2968a9e284b5925e380aed117216cdcef1f319f8e26e74"},
+    {file = "bingefriend_shows_core-0.2.8-py3-none-any.whl", hash = "sha256:8b83674b8cb01d112d787d7ba5726e2cfedebd6031ca463ec7dca7555938c8fc"},
+    {file = "bingefriend_shows_core-0.2.8.tar.gz", hash = "sha256:a55e00e9457d8e90e64188f12c4c375986348f643a091c1b742cb328982b11f3"},
 ]
 
 [package.dependencies]
