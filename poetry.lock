@@ -216,14 +216,14 @@ requests = "==2.*"
 
 [[package]]
 name = "bingefriend-shows-application"
-version = "0.1.15"
+version = "0.1.17"
 description = ""
 optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "bingefriend_shows_application-0.1.15-py3-none-any.whl", hash = "sha256:218f47f8472f4ee50d7344c9ac246163d7f41d6e408301210b90d6d021d69bf6"},
-    {file = "bingefriend_shows_application-0.1.15.tar.gz", hash = "sha256:e260b86a9238ed99085c2de5d26776bcd7f4470a1d8e30e4c7a32fef42bd9b80"},
+    {file = "bingefriend_shows_application-0.1.17-py3-none-any.whl", hash = "sha256:b6f21840e682730ad0a3110df58ea2330b0286056aa72b7dd2b0c177b99833b2"},
+    {file = "bingefriend_shows_application-0.1.17.tar.gz", hash = "sha256:54f0f74e872c4a2a60bbd2db0ba021142cd729a166aefbd39a557f3d1c6c715f"},
 ]
 
 [package.dependencies]
